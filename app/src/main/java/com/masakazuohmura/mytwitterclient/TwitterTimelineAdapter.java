@@ -21,7 +21,6 @@ import butterknife.ButterKnife;
 /**
  * Created by MasakazuOhmura on 2016/06/23.
  */
-
 public class TwitterTimelineAdapter extends RecyclerView.Adapter<TwitterTimelineAdapter.ViewHolder> {
 
     private ArrayList<Tweet> mTweets;

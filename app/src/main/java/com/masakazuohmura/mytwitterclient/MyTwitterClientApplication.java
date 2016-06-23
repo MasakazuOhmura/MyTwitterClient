@@ -16,7 +16,7 @@ public class MyTwitterClientApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-       final TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.CONSUMER_KEY,
+        final TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.CONSUMER_KEY,
                 BuildConfig.CONSUMER_SECRET);
         Fabric.with(this, new Twitter(authConfig));
     }
