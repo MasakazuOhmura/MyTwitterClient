@@ -37,7 +37,7 @@ public class TwitterTimelineRecyclerView extends RecyclerView {
     private String lang = "ja";
     private String local = "ja";
     private String resultType = "recent";
-    private Integer count = 10;
+    private Integer count = null;
     private String until = null;
     private Long sinceId = null;
     private Long maxId = null;
