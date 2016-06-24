@@ -18,6 +18,7 @@ import com.twitter.sdk.android.core.models.Search;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.SearchService;
 import com.twitter.sdk.android.core.services.params.Geocode;
+import com.twitter.sdk.android.tweetui.SearchTimeline;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,7 @@ import java.util.ArrayList;
  */
 public class TwitterTimelineRecyclerView extends RecyclerView {
 
+    SearchTimeline
     private SearchService mSearchService;
 
     private TwitterTimelineAdapter mAdapter;
