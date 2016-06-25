@@ -96,11 +96,7 @@ public class TwitterTimelineRecyclerView extends RecyclerView {
     }
 
     public void getTweets() {
-        requestSearchApi(mSearchService);
-    }
-
-    private void requestSearchApi(SearchService searchService) {
-        searchService.tweets(q,
+        mSearchService.tweets(q,
                 geocode,
                 lang,
                 local,
