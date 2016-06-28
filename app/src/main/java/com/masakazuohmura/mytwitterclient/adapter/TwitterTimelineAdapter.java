@@ -1,6 +1,7 @@
 package com.masakazuohmura.mytwitterclient.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +24,9 @@ import butterknife.ButterKnife;
  */
 public class TwitterTimelineAdapter extends RecyclerView.Adapter<TwitterTimelineAdapter.ViewHolder> {
 
-    private ArrayList<Tweet> mTweets;
+    private ArrayList<Tweet> mTweets = new ArrayList<>();
     private Context mContext;
+    private final Object mLock = new Object();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -49,8 +51,15 @@ public class TwitterTimelineAdapter extends RecyclerView.Adapter<TwitterTimeline
         }
     }
 
-    public TwitterTimelineAdapter(ArrayList<Tweet> dataSet, Context context) {
-        mTweets = dataSet;
+    public void add(@NonNull Tweet tweet) {
+        int position = mTweets.size();
+        synchronized (mLock) {
+            mTweets.add(tweet);
+        }
+        notifyItemInserted(position);
+    }
+
+    public TwitterTimelineAdapter(Context context) {
         mContext = context;
     }
 

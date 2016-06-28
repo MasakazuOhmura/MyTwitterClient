@@ -22,8 +22,6 @@ import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.SearchService;
 import com.twitter.sdk.android.core.services.params.Geocode;
 
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -38,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mTwitterTimelineRecyclerView;
 
     private TwitterTimelineAdapter mAdapter;
-    private ArrayList<Tweet> mTweets = new ArrayList<>();
 
     // API GET search/tweets
     private String q = "iQON";
@@ -49,20 +46,16 @@ public class MainActivity extends AppCompatActivity {
     private Integer count = null;
     private String until = null;
     private Long sinceId = null;
-    private Long maxId = null;
+    private volatile Long maxId = null;
     private Boolean includeEntries = null;
     private Callback<Search> cb = new Callback<Search>() {
         @Override
         public void success(Result<Search> result) {
             for (int i = 0; i < result.data.tweets.size(); i++) {
                 Tweet tweet = result.data.tweets.get(i);
-                mTweets.add(tweet);
-
-                if (i == result.data.tweets.size() - 1) {
-                    maxId = tweet.id - 1L;
-                }
+                mAdapter.add(tweet);
             }
-            mAdapter.notifyDataSetChanged();
+            maxId = result.data.searchMetadata.maxId;
         }
 
         @Override
@@ -88,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mTwitterTimelineRecyclerView.setLayoutManager(layoutManager);
         mTwitterTimelineRecyclerView.addItemDecoration(new DividerItemDecoration(this, R.drawable.recyclerview_divider));
-        mAdapter = new TwitterTimelineAdapter(mTweets, this);
+        mAdapter = new TwitterTimelineAdapter(this);
         mTwitterTimelineRecyclerView.setAdapter(mAdapter);
         mTwitterTimelineRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
@@ -98,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         getTweets(searchService);
-
     }
 
     private void getTweets(SearchService searchService) {
