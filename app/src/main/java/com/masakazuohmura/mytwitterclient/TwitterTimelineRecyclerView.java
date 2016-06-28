@@ -96,6 +96,7 @@ public class TwitterTimelineRecyclerView extends RecyclerView {
     }
 
     public void getTweets() {
+        Log.e("getTweet", "getTweet : " + maxId);
         mSearchService.tweets(q,
                 geocode,
                 lang,
