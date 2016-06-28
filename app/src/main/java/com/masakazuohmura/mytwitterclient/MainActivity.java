@@ -8,8 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.masakazuohmura.mytwitterclient.adapter.TwitterTimelineAdapter;
-import com.masakazuohmura.mytwitterclient.twkit.MySearchTimeline;
-import com.masakazuohmura.mytwitterclient.twkit.TwitterTimelineAdapter2;
+import com.masakazuohmura.mytwitterclient.listener.EndlessRecyclerViewScrollListener;
 import com.masakazuohmura.mytwitterclient.ui.DividerItemDecoration;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
@@ -38,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.recyclerView)
     RecyclerView mTwitterTimelineRecyclerView;
 
-    volatile private TwitterTimelineAdapter mAdapter;
-    volatile private ArrayList<Tweet> mTweets = new ArrayList<>();
+    private TwitterTimelineAdapter mAdapter;
+    private ArrayList<Tweet> mTweets = new ArrayList<>();
 
     // API GET search/tweets
     private String q = "iQON";
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private Integer count = null;
     private String until = null;
     private Long sinceId = null;
-    volatile private Long maxId = null;
+    private Long maxId = null;
     private Boolean includeEntries = null;
     private Callback<Search> cb = new Callback<Search>() {
         @Override
@@ -58,9 +57,11 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < result.data.tweets.size(); i++) {
                 Tweet tweet = result.data.tweets.get(i);
                 mTweets.add(tweet);
-            }
 
-            maxId = result.data.searchMetadata.maxId - 1L;
+                if (i == result.data.tweets.size() - 1) {
+                    maxId = tweet.id - 1L;
+                }
+            }
             mAdapter.notifyDataSetChanged();
         }
 
@@ -88,37 +89,15 @@ public class MainActivity extends AppCompatActivity {
         mTwitterTimelineRecyclerView.setLayoutManager(layoutManager);
         mTwitterTimelineRecyclerView.addItemDecoration(new DividerItemDecoration(this, R.drawable.recyclerview_divider));
         mAdapter = new TwitterTimelineAdapter(mTweets, this);
-//        mTwitterTimelineRecyclerView.setAdapter(mAdapter);
-//        mTwitterTimelineRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
-//            @Override
-//            public void onLoadMore(int page, int totalItemsCount) {
-//                getTweets(searchService);
-//            }
-//        });
-
-        // launch the app login activity when a guest user tries to favorite a Tweet
-        final Callback<Tweet> actionCallback = new Callback<Tweet>() {
+        mTwitterTimelineRecyclerView.setAdapter(mAdapter);
+        mTwitterTimelineRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
-            public void success(Result<Tweet> result) {
-                // Intentionally blank
-                Log.e("callback", "callback");
+            public void onLoadMore(int page, int totalItemsCount) {
+                getTweets(searchService);
             }
-            @Override
-            public void failure(TwitterException exception) {
-            }
-        };
+        });
 
-        final MySearchTimeline mySearchTimeline = new MySearchTimeline.Builder(twitterApiClient)
-                .query("iQON")
-                .languageCode("ja")
-                .local("ja")
-                .resultType("recent")
-                .build();
-
-        final TwitterTimelineAdapter2 adapter = new TwitterTimelineAdapter2(this, mySearchTimeline);
-        mTwitterTimelineRecyclerView.setAdapter(adapter);
-
-        //getTweets(searchService);
+        getTweets(searchService);
 
     }
 
