@@ -12,7 +12,6 @@ import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Search;
 import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.tweetui.TweetUi;
 
 import java.util.List;
 
@@ -22,14 +21,7 @@ import io.fabric.sdk.android.Fabric;
  * SearchTimeline provides a timeline of tweets from the search/tweets API source.
  */
 public class MySearchTimeline implements MyTimeline<Tweet> {
-    protected final TweetUi tweetUi;
-
-//    private void scribeImpression() {
-//        tweetUi.scribe(
-//                ScribeConstants.getSyndicatedSdkTimelineNamespace(getTimelineType()),
-//                ScribeConstants.getTfwClientTimelineNamespace(getTimelineType())
-//        );
-//    }
+    private TwitterApiClient twitterApiClient;
 
     /**
      * Returns a decremented maxId if the given id is non-null. Otherwise returns the given maxId.
@@ -82,29 +74,22 @@ public class MySearchTimeline implements MyTimeline<Tweet> {
 
 
     static final String FILTER_RETWEETS = " -filter:retweets";   // leading whitespace intentional
-    static final String RESULT_TYPE = "filtered";
-    private static final String SCRIBE_SECTION = "search";
-
-//    final String query;
-//    final String languageCode;
-//    final Integer maxItemsPerRequest;
+//    static final String RESULT_TYPE = "recent";
 
     String query;
     String languageCode;
-    Integer maxItemsPerRequest;
+    private String local;
+    private String resultType;
 
-    MySearchTimeline(TweetUi tweetUi) {
-        if (tweetUi == null) {
-            throw new IllegalArgumentException("TweetUi instance must not be null");
-        }
-        this.tweetUi = tweetUi;
-        //scribeImpression();
+    MySearchTimeline(TwitterApiClient twitterApiClient) {
+        this.twitterApiClient = twitterApiClient;
     }
 
-    MySearchTimeline(TweetUi tweetUi, String query, String languageCode, Integer maxItemsPerRequest) {
-        this(tweetUi);
+    MySearchTimeline(TwitterApiClient twitterApiClient, String query, String languageCode, String local, String resultType) {
+        this(twitterApiClient);
         this.languageCode = languageCode;
-        this.maxItemsPerRequest = maxItemsPerRequest;
+        this.local = local;
+        this.resultType = resultType;
         // if the query is non-null append the filter Retweets modifier
         this.query = query == null ? null : query + FILTER_RETWEETS;
     }
@@ -116,7 +101,6 @@ public class MySearchTimeline implements MyTimeline<Tweet> {
      * @param sinceId minimum id of the Tweets to load (exclusive).
      * @param cb      callback.
      */
-    @Override
     public void next(Long sinceId, Callback<MyTimelineResult<Tweet>> cb) {
         addRequest(createSearchRequest(sinceId, null, cb));
     }
@@ -127,7 +111,6 @@ public class MySearchTimeline implements MyTimeline<Tweet> {
      * @param maxId maximum id of the Tweets to load (exclusive).
      * @param cb    callback.
      */
-    @Override
     public void previous(Long maxId, Callback<MyTimelineResult<Tweet>> cb) {
         // api quirk: search api provides results that are inclusive of the maxId iff
         // FILTER_RETWEETS is added to the query (which we currently always add), decrement the
@@ -135,19 +118,14 @@ public class MySearchTimeline implements MyTimeline<Tweet> {
         addRequest(createSearchRequest(null, decrementMaxId(maxId), cb));
     }
 
-//    @Override
-//    String getTimelineType() {
-//        return SCRIBE_SECTION;
-//    }
-
     Callback<TwitterApiClient> createSearchRequest(final Long sinceId, final Long maxId,
                                                    final Callback<MyTimelineResult<Tweet>> cb) {
         return new LoggingCallback<TwitterApiClient>(cb, Fabric.getLogger()) {
             @Override
             public void success(Result<TwitterApiClient> result) {
-                result.data.getSearchService().tweets(query, null, languageCode, null, RESULT_TYPE,
-                        maxItemsPerRequest, null, sinceId, maxId, true,
-                        new GuestCallback<>(new SearchCallback(cb)));
+                result.data.getSearchService().tweets(query, null, languageCode, local, resultType,
+                        null, null, sinceId, maxId, true,
+                        new GuestCallback<>(new MySearchTimeline.SearchCallback(cb)));
             }
         };
     }
@@ -189,60 +167,44 @@ public class MySearchTimeline implements MyTimeline<Tweet> {
      * SearchTimeline Builder
      */
     public static class Builder {
-        private TweetUi tweetUi;
+        private TwitterApiClient twitterApiClient;
         private String query;
         private String lang;
-        private Integer maxItemsPerRequest = 30;
+        private String local;
+        private String resultType;
 
-        /**
-         * Constructs a Builder.
-         */
-        public Builder() {
-            this(TweetUi.getInstance());
-        }
+//        /**
+//         * Constructs a Builder.
+//         */
+//        public Builder() {
+//            this(TweetUi.getInstance());
+//        }
 
-        /**
-         * Constructs a Builder.
-         *
-         * @param tweetUi A TweetUi instance.
-         */
-        public Builder(TweetUi tweetUi) {
-            if (tweetUi == null) {
+
+        public Builder(TwitterApiClient twitterApiClient) {
+            if (twitterApiClient == null) {
                 throw new IllegalArgumentException("TweetUi instance must not be null");
             }
-            this.tweetUi = tweetUi;
+            this.twitterApiClient = twitterApiClient;
         }
 
-        /**
-         * Sets the query for the SearchTimeline.
-         *
-         * @param query A UTF-8, URL-encoded search query of 500 characters maximum, including
-         *              operators. Queries may additionally be limited by complexity.
-         */
-        public Builder query(String query) {
+        public MySearchTimeline.Builder query(String query) {
             this.query = query;
             return this;
         }
 
-        /**
-         * Sets the languageCode for the SearchTimeline.
-         *
-         * @param languageCode Restricts tweets to the given language, given by an ISO 639-1 code.
-         *                     Language detection is best-effort.
-         */
-        public Builder languageCode(String languageCode) {
+        public MySearchTimeline.Builder local(String local) {
+            this.local = local;
+            return this;
+        }
+
+        public MySearchTimeline.Builder languageCode(String languageCode) {
             this.lang = languageCode;
             return this;
         }
 
-        /**
-         * Sets the number of Tweets returned per request for the SearchTimeline.
-         *
-         * @param maxItemsPerRequest The number of tweets to return per request, up to a maximum of
-         *                           100.
-         */
-        public Builder maxItemsPerRequest(Integer maxItemsPerRequest) {
-            this.maxItemsPerRequest = maxItemsPerRequest;
+        public MySearchTimeline.Builder resultType(String resultType) {
+            this.resultType = resultType;
             return this;
         }
 
@@ -256,7 +218,7 @@ public class MySearchTimeline implements MyTimeline<Tweet> {
             if (query == null) {
                 throw new IllegalStateException("query must not be null");
             }
-            return new MySearchTimeline(tweetUi, query, lang, maxItemsPerRequest);
+            return new MySearchTimeline(twitterApiClient, query, lang, local, resultType);
         }
     }
 

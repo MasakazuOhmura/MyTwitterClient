@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.masakazuohmura.mytwitterclient.R;
 import com.squareup.picasso.Picasso;
@@ -29,7 +28,7 @@ import butterknife.ButterKnife;
 public class TwitterTimelineAdapter2<T extends Identifiable> extends RecyclerView.Adapter<TwitterTimelineAdapter2.ViewHolder> {
 
     private ArrayList<Tweet> mTweets;
-    private static Context context;
+    private Context context;
     protected  MyTimelineDelegate<Tweet> delegate;
     protected Callback<Tweet> actionCallback;
 
@@ -50,7 +49,6 @@ public class TwitterTimelineAdapter2<T extends Identifiable> extends RecyclerVie
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "未実装...", Toast.LENGTH_SHORT).show();
                 }
             });
         }
