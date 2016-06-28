@@ -1,4 +1,4 @@
-package com.masakazuohmura.mytwitterclient;
+package com.masakazuohmura.mytwitterclient.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;

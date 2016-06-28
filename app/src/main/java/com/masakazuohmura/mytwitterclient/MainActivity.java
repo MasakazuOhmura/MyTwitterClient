@@ -7,6 +7,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import com.masakazuohmura.mytwitterclient.adapter.TwitterTimelineAdapter;
+import com.masakazuohmura.mytwitterclient.listener.EndlessRecyclerViewScrollListener;
+import com.masakazuohmura.mytwitterclient.ui.DividerItemDecoration;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -34,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.recyclerView)
     RecyclerView mTwitterTimelineRecyclerView;
 
-    private TwitterTimelineAdapter mAdapter;
-    private ArrayList<Tweet> mTweets = new ArrayList<>();
+    volatile private TwitterTimelineAdapter mAdapter;
+    volatile private ArrayList<Tweet> mTweets = new ArrayList<>();
 
     // API GET search/tweets
     private String q = "iQON";
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private Integer count = null;
     private String until = null;
     private Long sinceId = null;
-    private Long maxId = null;
+    volatile private Long maxId = null;
     private Boolean includeEntries = null;
     private Callback<Search> cb = new Callback<Search>() {
         @Override
@@ -54,11 +57,9 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < result.data.tweets.size(); i++) {
                 Tweet tweet = result.data.tweets.get(i);
                 mTweets.add(tweet);
-
-                if (i == result.data.tweets.size() - 1) {
-                    maxId = tweet.id - 1L;
-                }
             }
+
+            maxId = result.data.searchMetadata.maxId - 1L;
             mAdapter.notifyDataSetChanged();
         }
 

@@ -1,4 +1,4 @@
-package com.masakazuohmura.mytwitterclient;
+package com.masakazuohmura.mytwitterclient.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.masakazuohmura.mytwitterclient.R;
 import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.core.internal.UserUtils;
 import com.twitter.sdk.android.core.models.Tweet;
