@@ -4,9 +4,7 @@ package com.masakazuohmura.mytwitterclient.twkit;
  * Created by MasakazuOhmura on 2016/06/27.
  */
 
-import com.masakazuohmura.mytwitterclient.MyTimeline;
-import com.masakazuohmura.mytwitterclient.MyTimelineCursor;
-import com.masakazuohmura.mytwitterclient.MyTimelineResult;
+
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.GuestCallback;
 import com.twitter.sdk.android.core.Result;
@@ -14,7 +12,6 @@ import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Search;
 import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.tweetui.ScribeConstants;
 import com.twitter.sdk.android.tweetui.TweetUi;
 
 import java.util.List;
@@ -27,12 +24,12 @@ import io.fabric.sdk.android.Fabric;
 public class MySearchTimeline implements MyTimeline<Tweet> {
     protected final TweetUi tweetUi;
 
-    private void scribeImpression() {
-        tweetUi.scribe(
-                ScribeConstants.getSyndicatedSdkTimelineNamespace(getTimelineType()),
-                ScribeConstants.getTfwClientTimelineNamespace(getTimelineType())
-        );
-    }
+//    private void scribeImpression() {
+//        tweetUi.scribe(
+//                ScribeConstants.getSyndicatedSdkTimelineNamespace(getTimelineType()),
+//                ScribeConstants.getTfwClientTimelineNamespace(getTimelineType())
+//        );
+//    }
 
     /**
      * Returns a decremented maxId if the given id is non-null. Otherwise returns the given maxId.
