@@ -24,9 +24,9 @@ import butterknife.ButterKnife;
  */
 public class TwitterTimelineAdapter extends RecyclerView.Adapter<TwitterTimelineAdapter.ViewHolder> {
 
-    private ArrayList<Tweet> mTweets = new ArrayList<>();
-    private Context mContext;
-    private final Object mLock = new Object();
+    private ArrayList<Tweet> tweets = new ArrayList<>();
+    private Context context;
+    private final Object lock = new Object();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -52,15 +52,15 @@ public class TwitterTimelineAdapter extends RecyclerView.Adapter<TwitterTimeline
     }
 
     public void add(@NonNull Tweet tweet) {
-        int position = mTweets.size();
-        synchronized (mLock) {
-            mTweets.add(tweet);
+        int position = tweets.size();
+        synchronized (lock) {
+            tweets.add(tweet);
         }
         notifyItemInserted(position);
     }
 
     public TwitterTimelineAdapter(Context context) {
-        mContext = context;
+        this.context = context;
     }
 
     @Override
@@ -73,14 +73,14 @@ public class TwitterTimelineAdapter extends RecyclerView.Adapter<TwitterTimeline
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Picasso.with(mContext).load(mTweets.get(position).user.profileImageUrl).into(viewHolder.userIconImage);
-        viewHolder.userScreenNameText.setText(UserUtils.formatScreenName(mTweets.get(position).user.screenName));
-        viewHolder.userNameText.setText(mTweets.get(position).user.name);
-        viewHolder.tweetText.setText(mTweets.get(position).text);
+        Picasso.with(context).load(tweets.get(position).user.profileImageUrl).into(viewHolder.userIconImage);
+        viewHolder.userScreenNameText.setText(UserUtils.formatScreenName(tweets.get(position).user.screenName));
+        viewHolder.userNameText.setText(tweets.get(position).user.name);
+        viewHolder.tweetText.setText(tweets.get(position).text);
     }
 
     @Override
     public int getItemCount() {
-        return mTweets.size();
+        return tweets.size();
     }
 }
