@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.masakazuohmura.mytwitterclient.adapter.TwitterTimelineAdapter;
+import com.masakazuohmura.mytwitterclient.api.TwitterSearchApi;
 import com.masakazuohmura.mytwitterclient.listener.EndlessRecyclerViewScrollListener;
 import com.masakazuohmura.mytwitterclient.ui.DividerItemDecoration;
 import com.twitter.sdk.android.Twitter;
@@ -20,7 +21,6 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Search;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.SearchService;
-import com.twitter.sdk.android.core.services.params.Geocode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,24 +38,28 @@ public class MainActivity extends AppCompatActivity {
     private TwitterTimelineAdapter mAdapter;
 
     // API GET search/tweets
-    private String q = "iQON";
-    private Geocode geocode = null;
-    private String lang = "ja";
-    private String local = "ja";
-    private String resultType = "recent";
-    private Integer count = null;
-    private String until = null;
-    private Long sinceId = null;
+//    private String q = "iQON";
+//    private Geocode geocode = null;
+//    private String lang = "ja";
+//    private String local = "ja";
+//    private String resultType = "recent";
+//    private Integer count = null;
+//    private String until = null;
+//    private Long sinceId = null;
     private volatile Long maxId = null;
-    private Boolean includeEntries = null;
+//    private Boolean includeEntries = null;
+
     private Callback<Search> cb = new Callback<Search>() {
         @Override
         public void success(Result<Search> result) {
             for (int i = 0; i < result.data.tweets.size(); i++) {
                 Tweet tweet = result.data.tweets.get(i);
                 mAdapter.add(tweet);
+
+                if (i == result.data.tweets.size() - 1) {
+                    maxId = tweet.id - 1L;
+                }
             }
-            maxId = result.data.searchMetadata.maxId;
         }
 
         @Override
@@ -63,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Twitter Exception", exception.getMessage());
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         final TwitterSession session = new TwitterSession(authToken, BuildConfig.TWITTER_USER_ID, BuildConfig.TWITTER_USER_NAME);
         final TwitterApiClient twitterApiClient = Twitter.getApiClient(session);
         final SearchService searchService = twitterApiClient.getSearchService();
+        final TwitterSearchApi twitterSearchApi = TwitterSearchApi.getInstance();
+        twitterSearchApi.setCb(cb);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mTwitterTimelineRecyclerView.setLayoutManager(layoutManager);
@@ -86,24 +91,29 @@ public class MainActivity extends AppCompatActivity {
         mTwitterTimelineRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                getTweets(searchService);
+
+                twitterSearchApi.setMaxId(maxId);
+                twitterSearchApi.getTweets(searchService);
+
+                //getTweets(searchService);
             }
         });
 
-        getTweets(searchService);
+//        getTweets(searchService);
+        twitterSearchApi.getTweets(searchService);
     }
 
-    private void getTweets(SearchService searchService) {
-        searchService.tweets(q,
-                geocode,
-                lang,
-                local,
-                resultType,
-                count,
-                until,
-                sinceId,
-                maxId,
-                includeEntries,
-                cb);
-    }
+//    private void getTweets(SearchService searchService) {
+//        searchService.tweets(q,
+//                geocode,
+//                lang,
+//                local,
+//                resultType,
+//                count,
+//                until,
+//                sinceId,
+//                maxId,
+//                includeEntries,
+//                cb);
+//    }
 }
