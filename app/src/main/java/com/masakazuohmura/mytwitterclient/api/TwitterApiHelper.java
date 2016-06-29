@@ -12,16 +12,16 @@ import com.twitter.sdk.android.core.services.SearchService;
  */
 
 public class TwitterApiHelper {
-    final SearchService searchService;
+
+    private TwitterApiClient twitterApiClient;
 
     public TwitterApiHelper() {
         final TwitterAuthToken authToken = new TwitterAuthToken(BuildConfig.TWITTER_TOKEN, BuildConfig.TWITTER_SECRET_TOKEN);
         final TwitterSession session = new TwitterSession(authToken, BuildConfig.TWITTER_USER_ID, BuildConfig.TWITTER_USER_NAME);
-        final TwitterApiClient twitterApiClient = Twitter.getApiClient(session);
-        searchService = twitterApiClient.getSearchService();
+        this.twitterApiClient = Twitter.getApiClient(session);
     }
 
     public SearchService getSearchService(){
-        return searchService;
+        return twitterApiClient.getSearchService();
     }
 }

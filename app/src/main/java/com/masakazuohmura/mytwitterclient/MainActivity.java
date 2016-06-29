@@ -72,10 +72,10 @@ public class MainActivity extends AppCompatActivity {
         twitterTimelineRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                twitterSearchApi.getTweets(cb, maxId);
+                twitterSearchApi.loadTweets(cb, maxId);
             }
         });
-        twitterSearchApi.getTweets(cb, maxId);
+        twitterSearchApi.loadTweets(cb, maxId);
     }
 
 }

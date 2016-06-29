@@ -24,17 +24,13 @@ public class TwitterSearchApi {
     private Boolean includeEntries = null;
     private Callback<Search> cb = null;
 
-    final SearchService searchService;
+    private SearchService searchService;
 
     public TwitterSearchApi(SearchService searchService) {
         this.searchService = searchService;
     }
 
-    public void setMaxId(Long maxId) {
-        this.maxId = maxId;
-    }
-
-    public void getTweets(Callback<Search> cb, Long maxId) {
+    public void loadTweets(Callback<Search> cb, Long maxId) {
         searchService.tweets(q,
                 geocode,
                 lang,
