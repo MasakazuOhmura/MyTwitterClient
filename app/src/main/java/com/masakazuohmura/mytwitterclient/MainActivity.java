@@ -80,8 +80,7 @@ public class MainActivity extends AppCompatActivity {
         final TwitterSession session = new TwitterSession(authToken, BuildConfig.TWITTER_USER_ID, BuildConfig.TWITTER_USER_NAME);
         final TwitterApiClient twitterApiClient = Twitter.getApiClient(session);
         final SearchService searchService = twitterApiClient.getSearchService();
-        final TwitterSearchApi twitterSearchApi = TwitterSearchApi.getInstance();
-        twitterSearchApi.setCb(cb);
+        final TwitterSearchApi twitterSearchApi = new TwitterSearchApi(cb);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mTwitterTimelineRecyclerView.setLayoutManager(layoutManager);

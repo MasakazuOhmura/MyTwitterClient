@@ -11,15 +11,6 @@ import com.twitter.sdk.android.core.services.params.Geocode;
 
 public class TwitterSearchApi {
 
-    private TwitterSearchApi() {
-    }
-
-    private static TwitterSearchApi twitterSearchApi = new TwitterSearchApi();
-
-    public static TwitterSearchApi getInstance() {
-        return twitterSearchApi;
-    }
-
     // API GET search/tweets
     private String q = "iQON";
     private Geocode geocode = null;
@@ -33,13 +24,9 @@ public class TwitterSearchApi {
     private Boolean includeEntries = null;
     private Callback<Search> cb = null;
 
-    public void setCb(Callback<Search> cb) {
+    public TwitterSearchApi(Callback cb) {
         this.cb = cb;
     }
-
-//    public TwitterSearchApi(Callback cb) {
-//        this.cb = cb;
-//    }
 
     public void setMaxId(Long maxId) {
         this.maxId = maxId;
