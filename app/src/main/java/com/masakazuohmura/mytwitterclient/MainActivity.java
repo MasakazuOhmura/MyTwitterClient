@@ -8,7 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.masakazuohmura.mytwitterclient.adapter.TwitterTimelineAdapter;
-import com.masakazuohmura.mytwitterclient.api.TwitterApiHelper;
+import com.masakazuohmura.mytwitterclient.api.MyTwitterApiHelper;
 import com.masakazuohmura.mytwitterclient.api.TwitterSearchApi;
 import com.masakazuohmura.mytwitterclient.listener.EndlessRecyclerViewScrollListener;
 import com.masakazuohmura.mytwitterclient.ui.DividerItemDecoration;
@@ -61,20 +61,22 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        final TwitterApiHelper twitterApiHelper = new TwitterApiHelper();
-        final TwitterSearchApi twitterSearchApi = new TwitterSearchApi(twitterApiHelper.getSearchService());
+        final MyTwitterApiHelper myTwitterApiHelper = new MyTwitterApiHelper();
+        final TwitterSearchApi twitterSearchApi = new TwitterSearchApi(myTwitterApiHelper.getSearchService());
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         twitterTimelineRecyclerView.setLayoutManager(layoutManager);
         twitterTimelineRecyclerView.addItemDecoration(new DividerItemDecoration(this, R.drawable.recyclerview_divider));
-        adapter = new TwitterTimelineAdapter(this);
-        twitterTimelineRecyclerView.setAdapter(adapter);
         twitterTimelineRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 twitterSearchApi.loadTweets(cb, maxId);
             }
         });
+
+        adapter = new TwitterTimelineAdapter(this);
+        twitterTimelineRecyclerView.setAdapter(adapter);
+
         twitterSearchApi.loadTweets(cb, maxId);
     }
 

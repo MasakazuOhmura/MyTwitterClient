@@ -20,9 +20,7 @@ public class TwitterSearchApi {
     private Integer count = null;
     private String until = null;
     private Long sinceId = null;
-    private volatile Long maxId = null;
     private Boolean includeEntries = null;
-    private Callback<Search> cb = null;
 
     private SearchService searchService;
 

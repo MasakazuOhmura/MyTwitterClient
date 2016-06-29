@@ -11,11 +11,11 @@ import com.twitter.sdk.android.core.services.SearchService;
  * Created by MasakazuOhmura on 2016/06/29.
  */
 
-public class TwitterApiHelper {
+public class MyTwitterApiHelper {
 
     private TwitterApiClient twitterApiClient;
 
-    public TwitterApiHelper() {
+    public MyTwitterApiHelper() {
         final TwitterAuthToken authToken = new TwitterAuthToken(BuildConfig.TWITTER_TOKEN, BuildConfig.TWITTER_SECRET_TOKEN);
         final TwitterSession session = new TwitterSession(authToken, BuildConfig.TWITTER_USER_ID, BuildConfig.TWITTER_USER_NAME);
         this.twitterApiClient = Twitter.getApiClient(session);
