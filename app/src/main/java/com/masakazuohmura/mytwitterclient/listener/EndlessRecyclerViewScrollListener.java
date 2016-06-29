@@ -11,11 +11,11 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
 
-    private int visibleThreshold = 5;
+    private static final int STARTING_PAGE_INDEX = 0;
+    private static final int VISIBLE_THRESHOLD = 5;
     private int currentPage = 0;
     private int previousTotalItemCount = 0;
     private boolean loading = true;
-    private int startingPageIndex = 0;
 
     private RecyclerView.LayoutManager mLayoutManager;
 
@@ -28,8 +28,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         for (int i = 0; i < lastVisibleItemPositions.length; i++) {
             if (i == 0) {
                 maxSize = lastVisibleItemPositions[i];
-            }
-            else if (lastVisibleItemPositions[i] > maxSize) {
+            } else if (lastVisibleItemPositions[i] > maxSize) {
                 maxSize = lastVisibleItemPositions[i];
             }
         }
@@ -51,7 +50,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         }
 
         if (totalItemCount < previousTotalItemCount) {
-            this.currentPage = this.startingPageIndex;
+            this.currentPage = STARTING_PAGE_INDEX;
             this.previousTotalItemCount = totalItemCount;
             if (totalItemCount == 0) {
                 this.loading = true;
@@ -63,7 +62,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
             previousTotalItemCount = totalItemCount;
         }
 
-        if (!loading && (lastVisibleItemPosition + visibleThreshold) > totalItemCount) {
+        if (!loading && (lastVisibleItemPosition + VISIBLE_THRESHOLD) > totalItemCount) {
             currentPage++;
             onLoadMore(currentPage, totalItemCount);
             loading = true;

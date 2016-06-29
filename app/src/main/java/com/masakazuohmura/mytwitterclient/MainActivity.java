@@ -32,26 +32,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView twitterTimelineRecyclerView;
 
     private TwitterTimelineAdapter adapter;
-
     private volatile Long maxId = null;
-    private Callback<Search> cb = new Callback<Search>() {
-        @Override
-        public void success(Result<Search> result) {
-            for (int i = 0; i < result.data.tweets.size(); i++) {
-                Tweet tweet = result.data.tweets.get(i);
-                adapter.add(tweet);
-
-                if (i == result.data.tweets.size() - 1) {
-                    maxId = tweet.id - 1L;
-                }
-            }
-        }
-
-        @Override
-        public void failure(TwitterException exception) {
-            Log.e("Twitter Exception", exception.getMessage());
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +42,24 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
+        final Callback<Search> cb = new Callback<Search>() {
+            @Override
+            public void success(Result<Search> result) {
+                for (int i = 0; i < result.data.tweets.size(); i++) {
+                    Tweet tweet = result.data.tweets.get(i);
+                    adapter.add(tweet);
+
+                    if (i == result.data.tweets.size() - 1) {
+                        maxId = tweet.id - 1L;
+                    }
+                }
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.e("Twitter Exception", exception.getMessage());
+            }
+        };
         final MyTwitterApiHelper myTwitterApiHelper = new MyTwitterApiHelper();
         final TwitterSearchApi twitterSearchApi = new TwitterSearchApi(myTwitterApiHelper.getSearchService());
 

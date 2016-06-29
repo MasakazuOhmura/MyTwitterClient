@@ -21,7 +21,7 @@ public class MyTwitterApiHelper {
         this.twitterApiClient = Twitter.getApiClient(session);
     }
 
-    public SearchService getSearchService(){
+    public SearchService getSearchService() {
         return twitterApiClient.getSearchService();
     }
 }

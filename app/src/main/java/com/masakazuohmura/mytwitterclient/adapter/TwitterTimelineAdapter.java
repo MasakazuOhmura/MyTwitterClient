@@ -42,12 +42,6 @@ public class TwitterTimelineAdapter extends RecyclerView.Adapter<TwitterTimeline
         public ViewHolder(View v) {
             super(v);
             ButterKnife.bind(this, v);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // do something
-                }
-            });
         }
     }
 
