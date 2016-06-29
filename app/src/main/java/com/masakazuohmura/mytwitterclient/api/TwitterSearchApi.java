@@ -22,7 +22,7 @@ public class TwitterSearchApi {
     private Long sinceId = null;
     private Boolean includeEntries = null;
 
-    private SearchService searchService;
+    private final SearchService searchService;
 
     public TwitterSearchApi(SearchService searchService) {
         this.searchService = searchService;

@@ -13,7 +13,7 @@ import com.twitter.sdk.android.core.services.SearchService;
 
 public class MyTwitterApiHelper {
 
-    private TwitterApiClient twitterApiClient;
+    private final TwitterApiClient twitterApiClient;
 
     public MyTwitterApiHelper() {
         final TwitterAuthToken authToken = new TwitterAuthToken(BuildConfig.TWITTER_TOKEN, BuildConfig.TWITTER_SECRET_TOKEN);
