@@ -27,7 +27,7 @@ public class TwitterSearchApi {
     public TwitterSearchApi(SearchService searchService) {
         this.searchService = searchService;
     }
-
+    
     public void loadTweets(Callback<Search> cb, Long maxId) {
         searchService.tweets(q,
                 geocode,

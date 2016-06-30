@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView twitterTimelineRecyclerView;
 
     private TwitterTimelineAdapter adapter;
-    private volatile Long maxId = null;
+    private Long maxId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
                     adapter.add(tweet);
 
                     if (i == result.data.tweets.size() - 1) {
-                        maxId = tweet.id - 1L;
+                        synchronized (maxId) {
+                            maxId = tweet.id - 1L;
+                        }
                     }
                 }
             }
