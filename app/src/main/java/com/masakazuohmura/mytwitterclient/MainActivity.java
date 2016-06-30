@@ -50,9 +50,7 @@ public class MainActivity extends AppCompatActivity {
                     adapter.add(tweet);
 
                     if (i == result.data.tweets.size() - 1) {
-                        synchronized (maxId) {
-                            maxId = tweet.id - 1L;
-                        }
+                        maxId = tweet.id - 1L;
                     }
                 }
             }
@@ -71,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         twitterTimelineRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
+                // success()で書き換わる前のmaxIdを読み込む可能性がある？
                 twitterSearchApi.loadTweets(cb, maxId);
             }
         });
@@ -78,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new TwitterTimelineAdapter(this);
         twitterTimelineRecyclerView.setAdapter(adapter);
 
+        maxId = null;
         twitterSearchApi.loadTweets(cb, maxId);
     }
 
